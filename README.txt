@@ -1,3 +1,1 @@
-API criada em NodeJS
-
-#Authentication User and Admin
+API de autenticação criada em NodeJS
