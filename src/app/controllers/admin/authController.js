@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-//const mailer = require('../../modules/mailer');
 
 const authConfig = require('../../../config/admin');
 
@@ -18,15 +17,14 @@ function generateToken(params = {}) {
 
 router.post('/register', async (req, res) => {
     const { email } = req.body;
-    const { username } = req.body;
+    const { name } = req.body;
 
     try {
         if (await Admin.findOne({ email }))
             return res.status(400).send({ error: 'E-mail ja existente.' });
 
-        if (await Admin.findOne({ username }))
-            return res.status(400).send({ error: 'Username ja existente.' });
-
+        if (!name)
+            return res.status(400).send({ error: 'Nome do usuário não informado' });
 
         const admin = await Admin.create(req.body);
 
@@ -60,45 +58,5 @@ router.post('/authenticate', async (req, res) => {
         token: generateToken({ id: admin.id }),
     });
 });
-
-/*router.post('/forgot_password', async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const user = await User.findOne({ email });
-
-        if (!user)
-            return res.status(400).send({ error: 'Usuário não encontrado' }); 
-
-        const token = crypto.randomBytes(20).toString('hex');
-
-        const now = new Date();
-        now.setHours(now.getHours() + 1);
-
-        //mongoose.set('useFindAndModify', false);
-        await User.findOneAndUpdate(user.id, {
-            '$set': {
-                passwordResetToken: token,
-                passwordResetExpires: now,
-            }
-        });
-        
-        mailer.sendMail({
-            to: email,
-            from: 'suporte@itragoo.com.br',
-            template: 'auth/forgot_password',
-            context: { token }
-        }, (err) => {
-            if (err)
-                return res.status(400).send({ error: 'Nao foi possivel enviar a recuperação de senha' });
-            
-            return res.send();
-        });
-
-    }catch (err) {
-        console.log(err);
-        res.status(400).send({ error: 'Erro! Por favor tente novamente' });
-    }
-});*/
 
 module.exports = app => app.use('/admin', router);

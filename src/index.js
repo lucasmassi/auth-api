@@ -9,13 +9,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // USER ROUTES \\
 require('./app/controllers/user/authController')(app);
-require('./app/controllers/user/productController')(app);
 
 // ADMIN ROUTES \\
 require('./app/controllers/admin/authController')(app);
 require('./app/controllers/admin/userController')(app);
-
-// GUEST ROUTES \\
 
 app.use(cors());
 
